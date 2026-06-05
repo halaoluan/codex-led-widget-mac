@@ -89,6 +89,16 @@ npm run build
 
 这个 manifest 可以让项目作为 Codex 插件展示和分发，插件内容包括 macOS 桌面小组件源码、安装说明和发布包入口。
 
+## 内置发布 Skill
+
+这个仓库还包含一个可复用的 Codex skill：
+
+```text
+skills/github-plugin-publisher
+```
+
+当你想让 Codex 帮你把小工具或插件打包、写中英文 GitHub 说明、准备 Release Notes、配置仓库信息并公开发布到 GitHub 时，可以使用这个 skill。
+
 ## 当前限制
 
 - 当前只验证了 Apple Silicon macOS 构建。

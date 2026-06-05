@@ -89,6 +89,16 @@ This repository is also structured as a Codex plugin. The plugin manifest lives 
 
 The plugin presents the macOS desktop widget, installation instructions, and release artifacts as a Codex-discoverable package.
 
+## Included Publishing Skill
+
+This repository also includes a reusable Codex skill at:
+
+```text
+skills/github-plugin-publisher
+```
+
+Use it when you want Codex to package a small app or plugin, write bilingual GitHub documentation, prepare release notes, configure repository metadata, and publish a public GitHub release.
+
 ## Current Limitations
 
 - Apple Silicon macOS builds are currently validated.

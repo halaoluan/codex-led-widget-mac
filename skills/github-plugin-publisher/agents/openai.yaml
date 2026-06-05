@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitHub Plugin Publisher"
+  short_description: "Package and publish a small app or Codex plugin on GitHub."
+  default_prompt: "Package this project as a public GitHub plugin/app release with polished bilingual docs, release notes, repository metadata, and launch-ready presentation."
