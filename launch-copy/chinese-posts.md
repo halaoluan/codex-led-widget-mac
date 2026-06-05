@@ -1,5 +1,11 @@
 # 中文发布文案
 
+小红书、视频号、朋友圈等偏生活化平台，优先使用：
+
+```text
+launch-copy/xiaohongshu-high-engagement.md
+```
+
 ## V2EX
 
 标题：

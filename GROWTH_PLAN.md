@@ -121,6 +121,7 @@ Use the copy in `launch-copy/english-posts.md`.
 - Use a screen recording plus short captions.
 - Focus on the daily pain and visual result.
 - Avoid making it look like a generic coding tool ad.
+- For Xiaohongshu-style copy, use `launch-copy/xiaohongshu-high-engagement.md`.
 
 ### Day 10: Fix Feedback
 

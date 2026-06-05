@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1440" viewBox="0 0 1080 1440">
+  <rect width="1080" height="1440" fill="#F8FAFC"/>
+  <text x="72" y="130" fill="#0F172A" font-size="76" font-weight="800" font-family="PingFang SC, Hiragino Sans GB, Arial Unicode MS">用了这个以后</text>
+  <text x="72" y="220" fill="#0F172A" font-size="76" font-weight="800" font-family="PingFang SC, Hiragino Sans GB, Arial Unicode MS">我少打开很多次网页</text>
+  <rect x="72" y="320" width="936" height="360" rx="34" fill="#FEE2E2"/>
+  <text x="120" y="400" fill="#991B1B" font-size="42" font-weight="800" font-family="PingFang SC, Hiragino Sans GB, Arial Unicode MS">之前</text>
+  <text x="120" y="500" fill="#7F1D1D" font-size="54" font-weight="800" font-family="PingFang SC, Hiragino Sans GB, Arial Unicode MS">写一会儿就去查额度</text>
+  <text x="120" y="590" fill="#991B1B" font-size="36" font-family="PingFang SC, Hiragino Sans GB, Arial Unicode MS">还剩多少？什么时候恢复？还能不能继续？</text>
+  <rect x="72" y="760" width="936" height="440" rx="34" fill="#DCFCE7"/>
+  <text x="120" y="840" fill="#166534" font-size="42" font-weight="800" font-family="PingFang SC, Hiragino Sans GB, Arial Unicode MS">现在</text>
+  <circle cx="180" cy="990" r="44" fill="#22C55E"/>
+  <circle cx="300" cy="990" r="44" fill="#FACC15"/>
+  <circle cx="420" cy="990" r="44" fill="#EF4444"/>
+  <text x="120" y="1110" fill="#14532D" font-size="54" font-weight="800" font-family="PingFang SC, Hiragino Sans GB, Arial Unicode MS">看桌面红绿灯就够了</text>
+  <text x="120" y="1175" fill="#166534" font-size="34" font-family="PingFang SC, Hiragino Sans GB, Arial Unicode MS">额度恢复后自动变回绿色</text>
+  <text x="72" y="1320" fill="#0F172A" font-size="38" font-weight="700" font-family="PingFang SC, Hiragino Sans GB, Arial Unicode MS">Codex LED Widget for macOS</text>
+  <text x="72" y="1370" fill="#475569" font-size="28" font-family="PingFang SC, Hiragino Sans GB, Arial Unicode MS">本机读取，不上传账号数据</text>
+</svg>
