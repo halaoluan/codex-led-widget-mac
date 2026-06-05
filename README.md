@@ -99,6 +99,15 @@ skills/github-plugin-publisher
 
 Use it when you want Codex to package a small app or plugin, write bilingual GitHub documentation, prepare release notes, configure repository metadata, and publish a public GitHub release.
 
+## Launch Plan
+
+The public growth plan and ready-to-use launch copy live in:
+
+```text
+GROWTH_PLAN.md
+launch-copy/
+```
+
 ## Current Limitations
 
 - Apple Silicon macOS builds are currently validated.

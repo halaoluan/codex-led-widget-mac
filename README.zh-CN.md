@@ -99,6 +99,15 @@ skills/github-plugin-publisher
 
 当你想让 Codex 帮你把小工具或插件打包、写中英文 GitHub 说明、准备 Release Notes、配置仓库信息并公开发布到 GitHub 时，可以使用这个 skill。
 
+## 增长计划
+
+公开的 30 天增长计划和可直接使用的发布文案放在：
+
+```text
+GROWTH_PLAN.md
+launch-copy/
+```
+
 ## 当前限制
 
 - 当前只验证了 Apple Silicon macOS 构建。
