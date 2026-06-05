@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Codex LED Widget</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-state="loading">
+    <main class="widget">
+      <div class="ambient ambient-a"></div>
+      <div class="ambient ambient-b"></div>
+
+      <header class="titlebar">
+        <div class="brand">
+          <span id="trafficLight" class="traffic-light loading" aria-hidden="true"></span>
+          <div>
+            <span id="brandName" class="brand-name">Codex 额度</span>
+            <span id="stateText" class="brand-state">读取中</span>
+          </div>
+        </div>
+        <div class="window-actions">
+          <button id="langBtn" class="text-button" title="Language" aria-label="Language">EN</button>
+          <button id="sizeBtn" class="text-button" title="组件大小" aria-label="组件大小">小</button>
+          <button id="pinBtn" class="icon-button active" title="桌面常驻" aria-label="桌面常驻">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M14 4l6 6-3 1-4 4v4l-2 2-2-6-6-2 2-2h4l4-4 1-3z" />
+            </svg>
+          </button>
+          <button id="refreshBtn" class="icon-button" title="刷新" aria-label="刷新">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 12a8 8 0 0 1-13.7 5.7M4 12A8 8 0 0 1 17.7 6.3M17 3v4h-4M7 21v-4h4" />
+            </svg>
+          </button>
+          <button id="minimizeBtn" class="icon-button" title="最小化" aria-label="最小化">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h14" />
+            </svg>
+          </button>
+          <button id="closeBtn" class="icon-button danger" title="退出" aria-label="退出">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6l12 12M18 6 6 18" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <section class="content">
+        <div id="liquidMeter" class="liquid-meter" aria-label="Codex 剩余额度">
+          <div class="glass-rim"></div>
+          <div id="liquidFill" class="liquid-fill">
+            <div class="wave wave-one"></div>
+            <div class="wave wave-two"></div>
+          </div>
+          <div class="shine"></div>
+          <div class="meter-copy">
+            <strong id="remaining">--%</strong>
+            <span id="remainingLabel">剩余</span>
+          </div>
+        </div>
+
+        <div class="quota-panel">
+          <div class="quota-card primary">
+            <span id="primaryLabel">5小时窗口</span>
+            <strong id="primaryText">--</strong>
+          </div>
+          <div class="quota-card">
+            <span id="secondaryLabel">7天窗口</span>
+            <strong id="secondaryText">--</strong>
+          </div>
+          <div class="quota-card slim">
+            <span id="planLabel">计划</span>
+            <strong id="planText">--</strong>
+          </div>
+        </div>
+      </section>
+
+      <footer class="status">
+        <span id="statusDot" class="status-dot loading"></span>
+        <span id="statusText">正在读取 Codex 额度...</span>
+      </footer>
+    </main>
+
+    <script src="./renderer.js"></script>
+  </body>
+</html>

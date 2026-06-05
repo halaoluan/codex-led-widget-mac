@@ -1,0 +1,55 @@
+{
+  "name": "codex-led-widget-mac",
+  "version": "0.1.6",
+  "description": "macOS liquid-glass desktop widget for showing local Codex usage quota.",
+  "main": "src/main/main.js",
+  "author": "Codex LED Widget macOS Contributors",
+  "license": "MIT",
+  "scripts": {
+    "dev": "electron .",
+    "start": "electron .",
+    "build": "CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac dmg zip",
+    "build:dir": "CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --dir",
+    "check:quota": "node scripts/check-quota.js"
+  },
+  "build": {
+    "appId": "cn.codex.led.widget.mac",
+    "productName": "Codex LED Widget",
+    "directories": {
+      "output": "dist"
+    },
+    "artifactName": "Codex-LED-Widget-${version}-mac-${arch}.${ext}",
+    "files": [
+      "src/**/*",
+      "scripts/**/*",
+      "package.json",
+      "README.md"
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ]
+    },
+    "dmg": {
+      "artifactName": "Codex-LED-Widget-${version}-mac-${arch}.dmg"
+    }
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  }
+}

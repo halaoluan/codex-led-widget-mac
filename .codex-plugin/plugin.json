@@ -1,0 +1,42 @@
+{
+  "name": "codex-led-widget-mac",
+  "version": "0.1.6",
+  "description": "macOS desktop widget for displaying local Codex usage quota.",
+  "author": {
+    "name": "Codex LED Widget macOS Contributors",
+    "url": "https://github.com/halaoluan/codex-led-widget-mac"
+  },
+  "homepage": "https://github.com/halaoluan/codex-led-widget-mac",
+  "repository": "https://github.com/halaoluan/codex-led-widget-mac",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "quota",
+    "macos",
+    "desktop-widget",
+    "electron"
+  ],
+  "interface": {
+    "displayName": "Codex LED Widget for macOS",
+    "shortDescription": "A macOS desktop widget for local Codex quota.",
+    "longDescription": "Codex LED Widget for macOS is a liquid-glass desktop widget that reads local Codex rate-limit information through the Codex app-server and displays remaining quota, reset windows, plan labels, and status colors.",
+    "developerName": "Codex LED Widget macOS Contributors",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Local"
+    ],
+    "websiteURL": "https://github.com/halaoluan/codex-led-widget-mac",
+    "brandColor": "#36E6AD",
+    "screenshots": [
+      "./assets/1.png",
+      "./assets/2.png",
+      "./assets/3.png"
+    ],
+    "defaultPrompt": [
+      "Show me how to install the Codex LED Widget.",
+      "Build the macOS Codex quota widget.",
+      "Check my local Codex quota widget setup."
+    ]
+  }
+}
