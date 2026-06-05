@@ -18,6 +18,7 @@ A liquid-glass desktop widget for macOS that displays your local Codex usage quo
 - Supports small, medium, and large widget sizes.
 - Supports Free, Go, Plus, Pro, Business, and Enterprise plan labels.
 - Stays on the desktop like a calendar or weather widget.
+- The collapse button shrinks the widget into a visible desktop pill instead of hiding it.
 - Includes a macOS menu bar entry for restore, refresh, size, plan, and launch-at-login actions.
 
 ## How It Works

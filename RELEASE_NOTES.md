@@ -1,8 +1,28 @@
-# Codex LED Widget for macOS 0.1.6
+# Codex LED Widget for macOS 0.1.7
 
 ## English
 
-Initial public macOS plugin release.
+Patch release for the macOS desktop widget.
+
+- Changes the minimize button into a visible collapse/expand action.
+- Keeps the widget on the desktop while collapsed.
+- Adds Chinese and English collapsed-state feedback.
+- Keeps all v0.1.6 features, including quota reading, desktop persistence, size modes, and plan labels.
+
+Download the `.dmg`, open it, and move the app to Applications.
+
+## 中文
+
+macOS 桌面小组件修复版本。
+
+- 将最小化按钮改为可见的折叠 / 展开动作。
+- 折叠后小组件仍然保留在桌面，不会隐藏。
+- 新增中英文折叠状态反馈。
+- 保留 v0.1.6 的所有能力，包括额度读取、桌面常驻、尺寸切换和套餐显示。
+
+下载 `.dmg` 后打开，并拖入 Applications 即可使用。
+
+## v0.1.6 highlights
 
 - Adds a liquid-glass desktop widget for local Codex quota.
 - Reads quota through the local Codex app-server.
@@ -12,20 +32,3 @@ Initial public macOS plugin release.
 - Adds small, medium, and large size modes.
 - Adds Free, Go, Plus, Pro, Business, and Enterprise plan labels.
 - Adds bilingual Chinese and English UI labels.
-
-Download the `.dmg`, open it, and move the app to Applications.
-
-## 中文
-
-首个公开 macOS 插件版本。
-
-- 新增液态玻璃风格 Codex 桌面额度小组件。
-- 通过本机 Codex app-server 读取真实额度。
-- 显示 5 小时窗口和 7 天窗口剩余比例与恢复时间。
-- 新增绿色、黄色、红色额度状态。
-- 新增 macOS 桌面常驻模式。
-- 新增小 / 中 / 大三档尺寸。
-- 新增 Free、Go、Plus、Pro、Business、Enterprise 套餐显示。
-- 新增中英文界面文案。
-
-下载 `.dmg` 后打开，并拖入 Applications 即可使用。

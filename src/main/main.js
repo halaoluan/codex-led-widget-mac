@@ -18,9 +18,12 @@ let launchAtLogin = false;
 let currentWidgetSize = "small";
 let planDisplayOverride = "PLUS";
 let lastTrayRestoreAt = 0;
+let isCollapsed = false;
 
 const BASE_WIDTH = 438;
 const BASE_HEIGHT = 268;
+const COLLAPSED_WIDTH = 232;
+const COLLAPSED_HEIGHT = 68;
 const WIDGET_SIZES = {
   small: { label: "小", scale: 0.78 },
   medium: { label: "中", scale: 1 },
@@ -38,9 +41,11 @@ const PLAN_DISPLAY_OPTIONS = [
 
 function widgetBoundsFor(sizeName = currentWidgetSize) {
   const size = WIDGET_SIZES[sizeName] || WIDGET_SIZES.small;
+  const width = isCollapsed ? COLLAPSED_WIDTH : BASE_WIDTH;
+  const height = isCollapsed ? COLLAPSED_HEIGHT : BASE_HEIGHT;
   return {
-    width: Math.round(BASE_WIDTH * size.scale),
-    height: Math.round(BASE_HEIGHT * size.scale),
+    width: Math.round(width * size.scale),
+    height: Math.round(height * size.scale),
     scale: size.scale
   };
 }
@@ -136,7 +141,7 @@ function rebuildTrayMenu() {
   if (!tray) return;
   trayMenu = Menu.buildFromTemplate([
       { label: "显示窗口", click: restoreWindowFromTray },
-      { label: "放回桌面", click: minimizeWindow },
+      { label: isCollapsed ? "展开组件" : "折叠组件", click: toggleWidgetCollapse },
       { label: "放到右上角", click: placeWindowTopRight },
       { label: "刷新额度", click: () => mainWindow?.webContents.send("quota:refresh") },
       {
@@ -196,9 +201,26 @@ function toggleWindow() {
 }
 
 function minimizeWindow() {
-  if (!mainWindow || mainWindow.isDestroyed()) return;
-  pinToDesktop();
+  toggleWidgetCollapse();
+}
+
+function toggleWidgetCollapse() {
+  return setWidgetCollapsed(!isCollapsed);
+}
+
+function setWidgetCollapsed(value) {
+  isCollapsed = Boolean(value);
+  if (!mainWindow || mainWindow.isDestroyed()) return isCollapsed;
+
+  const bounds = widgetBoundsFor();
+  mainWindow.webContents.send("widget:collapsedChanged", isCollapsed);
+  mainWindow.setMinimumSize(bounds.width, bounds.height);
+  mainWindow.setSize(bounds.width, bounds.height, true);
+  mainWindow.webContents.setZoomFactor(bounds.scale);
   placeWindowTopRight();
+  pinToDesktop();
+  rebuildTrayMenu();
+  return isCollapsed;
 }
 
 function showTrayMenu() {
@@ -217,6 +239,10 @@ function restoreWindowFromTray() {
 
   if (mainWindow.isMinimized()) {
     mainWindow.restore();
+  }
+
+  if (isCollapsed) {
+    setWidgetCollapsed(false);
   }
 
   app.focus({ steal: true });
@@ -253,6 +279,9 @@ app.whenReady().then(() => {
   ipcMain.handle("widget:size:get", () => currentWidgetSize);
   ipcMain.handle("widget:size:set", (_event, value) => setWidgetSize(value));
   ipcMain.handle("widget:size:cycle", () => cycleWidgetSize());
+  ipcMain.handle("widget:collapsed:get", () => isCollapsed);
+  ipcMain.handle("widget:collapsed:set", (_event, value) => setWidgetCollapsed(value));
+  ipcMain.handle("widget:collapsed:toggle", () => toggleWidgetCollapse());
   ipcMain.handle("plan:display:get", () => planDisplayOverride);
   ipcMain.handle("plan:display:set", (_event, value) => setPlanDisplayOverride(value));
   ipcMain.handle("app:launchAtLogin:get", () => launchAtLogin);

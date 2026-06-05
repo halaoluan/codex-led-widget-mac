@@ -19,6 +19,53 @@ body {
   user-select: none;
 }
 
+body[data-collapsed="true"] .widget {
+  width: 232px;
+  height: 68px;
+  padding: 12px 12px;
+  border-radius: 20px;
+}
+
+body[data-collapsed="true"] .content,
+body[data-collapsed="true"] .status,
+body[data-collapsed="true"] .ambient-b,
+body[data-collapsed="true"] .window-actions button:not(#minimizeBtn) {
+  display: none;
+}
+
+body[data-collapsed="true"] .titlebar {
+  min-height: 42px;
+}
+
+body[data-collapsed="true"] .brand {
+  gap: 10px;
+  min-width: 0;
+}
+
+body[data-collapsed="true"] .traffic-light {
+  width: 18px;
+  height: 18px;
+  flex-basis: 18px;
+}
+
+body[data-collapsed="true"] .brand-name {
+  font-size: 15px;
+  max-width: 132px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body[data-collapsed="true"] .brand-state {
+  display: none;
+}
+
+body[data-collapsed="true"] .icon-button,
+body[data-collapsed="true"] .text-button {
+  width: 30px;
+  height: 30px;
+}
+
 body {
   --accent: #55f0b2;
   --accent-strong: #20d186;

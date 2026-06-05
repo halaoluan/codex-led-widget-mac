@@ -42,6 +42,10 @@ const copy = {
     refreshing: "正在读取 Codex 额度...",
     failed: "无法读取额度，点此打开 Codex",
     pinned: "已固定到桌面",
+    collapsed: "已折叠",
+    expanded: "已展开",
+    collapse: "折叠",
+    expand: "展开",
     after: "后",
     now: "即将恢复",
     plus: "PLUS"
@@ -61,6 +65,10 @@ const copy = {
     refreshing: "Reading Codex quota...",
     failed: "Cannot read quota. Click to open Codex",
     pinned: "Pinned to desktop",
+    collapsed: "Collapsed",
+    expanded: "Expanded",
+    collapse: "Collapse",
+    expand: "Expand",
     after: "left",
     now: "reset soon",
     plus: "PLUS"
@@ -89,6 +97,13 @@ function renderWidgetSize(size) {
 function renderPlanDisplay(value) {
   planDisplayOverride = value || "PLUS";
   render(lastQuota);
+}
+
+function renderCollapsed(value) {
+  const collapsed = Boolean(value);
+  els.body.dataset.collapsed = collapsed ? "true" : "false";
+  els.minimizeBtn.title = collapsed ? t("expand") : t("collapse");
+  els.minimizeBtn.setAttribute("aria-label", collapsed ? t("expand") : t("collapse"));
 }
 
 function quotaState(percent) {
@@ -196,7 +211,11 @@ async function syncAlwaysOnTop() {
 }
 
 els.refreshBtn.addEventListener("click", refreshQuota);
-els.minimizeBtn.addEventListener("click", () => window.codexQuota.minimize());
+els.minimizeBtn.addEventListener("click", async () => {
+  const collapsed = await window.codexQuota.toggleCollapsed();
+  renderCollapsed(collapsed);
+  els.statusText.textContent = collapsed ? t("collapsed") : t("expanded");
+});
 els.closeBtn.addEventListener("click", () => window.codexQuota.close());
 els.pinBtn.addEventListener("click", async () => {
   els.pinBtn.classList.add("active");
@@ -223,11 +242,13 @@ els.statusText.addEventListener("click", () => {
 window.codexQuota.onRefresh(refreshQuota);
 window.codexQuota.onAlwaysOnTopChanged(syncAlwaysOnTop);
 window.codexQuota.onWidgetSizeChanged(renderWidgetSize);
+window.codexQuota.onCollapsedChanged(renderCollapsed);
 window.codexQuota.onPlanDisplayChanged(renderPlanDisplay);
 
 setLanguage(locale);
 syncAlwaysOnTop();
 window.codexQuota.getWidgetSize().then(renderWidgetSize);
+window.codexQuota.getCollapsed().then(renderCollapsed);
 window.codexQuota.getPlanDisplay().then(renderPlanDisplay);
 refreshQuota();
 refreshTimer = setInterval(refreshQuota, REFRESH_INTERVAL_MS);

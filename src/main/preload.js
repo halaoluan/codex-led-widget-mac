@@ -10,6 +10,9 @@ contextBridge.exposeInMainWorld("codexQuota", {
   getWidgetSize: () => ipcRenderer.invoke("widget:size:get"),
   setWidgetSize: (value) => ipcRenderer.invoke("widget:size:set", value),
   cycleWidgetSize: () => ipcRenderer.invoke("widget:size:cycle"),
+  getCollapsed: () => ipcRenderer.invoke("widget:collapsed:get"),
+  setCollapsed: (value) => ipcRenderer.invoke("widget:collapsed:set", value),
+  toggleCollapsed: () => ipcRenderer.invoke("widget:collapsed:toggle"),
   getPlanDisplay: () => ipcRenderer.invoke("plan:display:get"),
   setPlanDisplay: (value) => ipcRenderer.invoke("plan:display:set", value),
   getLaunchAtLogin: () => ipcRenderer.invoke("app:launchAtLogin:get"),
@@ -23,6 +26,9 @@ contextBridge.exposeInMainWorld("codexQuota", {
   },
   onWidgetSizeChanged: (callback) => {
     ipcRenderer.on("widget:sizeChanged", (_event, value) => callback(value));
+  },
+  onCollapsedChanged: (callback) => {
+    ipcRenderer.on("widget:collapsedChanged", (_event, value) => callback(value));
   },
   onPlanDisplayChanged: (callback) => {
     ipcRenderer.on("plan:displayChanged", (_event, value) => callback(value));

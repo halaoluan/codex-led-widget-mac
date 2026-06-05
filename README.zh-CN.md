@@ -16,6 +16,7 @@
 - 小 / 中 / 大三档尺寸。
 - 套餐显示支持 Free、Go、Plus、Pro、Business、Enterprise，默认 Plus。
 - 桌面常驻模式：像日历、天气模块一样停留在桌面，不会被最小化隐藏。
+- 折叠按钮会把小组件缩成仍然可见的桌面小胶囊，而不是隐藏窗口。
 - 状态栏菜单支持显示、放回右上角、刷新、尺寸、套餐和开机启动。
 
 ## 工作原理
@@ -58,4 +59,3 @@ npm run build
 - 当前只验证了 Apple Silicon macOS 构建。
 - 未进行 Apple Developer ID 签名，首次打开时 macOS 可能提示安全确认。
 - 额度接口来自本机 Codex，未来 Codex 内部接口变化时可能需要更新适配器。
-
