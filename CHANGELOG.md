@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Polished the GitHub landing experience with download-focused English and Chinese README files.
+- Added privacy, installation, roadmap, and release notes copy for public users.
+- Added a social preview image asset.
+- Added issue templates, contribution notes, and a security policy.
+
 ## 0.1.7
 
 - Changed the minimize control into a visible collapse/expand action.

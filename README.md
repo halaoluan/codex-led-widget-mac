@@ -1,27 +1,48 @@
 # Codex LED Widget for macOS
 
-A liquid-glass desktop widget for macOS that displays your local Codex usage quota without repeatedly opening the Codex quota page.
+A beautiful macOS desktop widget that shows your local Codex quota at a glance.
 
 [中文说明](./README.zh-CN.md)
+
+[![Latest release](https://img.shields.io/github/v/release/halaoluan/codex-led-widget-mac?label=download)](https://github.com/halaoluan/codex-led-widget-mac/releases/latest)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
+[![macOS](https://img.shields.io/badge/macOS-Apple%20Silicon-black)](https://github.com/halaoluan/codex-led-widget-mac/releases/latest)
+
+![Codex LED Widget preview](./assets/5.png)
+
+## Download
+
+Download the latest DMG:
+
+**[Download Codex LED Widget for macOS](https://github.com/halaoluan/codex-led-widget-mac/releases/latest)**
+
+Open the `.dmg`, drag **Codex LED Widget** into **Applications**, then launch it.
+
+## Why
+
+If you use Codex heavily, checking the quota page again and again gets old fast. Codex LED Widget keeps the important quota state on your desktop:
+
+- Green: available, remaining quota is at least 10%.
+- Yellow: low, remaining quota is below 10%.
+- Red: exhausted, remaining quota is 0.
+- The widget turns green again automatically after the quota window resets.
 
 ## Features
 
 - Reads local Codex quota through the Codex app-server.
 - Shows remaining quota for the active window.
 - Displays 5-hour and 7-day quota windows with reset countdowns.
-- Uses traffic-light status colors:
-  - Green: remaining quota >= 10%.
-  - Yellow: remaining quota < 10%.
-  - Red: remaining quota = 0.
-- Refreshes automatically every 60 seconds.
-- Provides a manual refresh action.
+- Supports Free, Go, Plus, Pro, Business, Team, and Enterprise plan labels.
+- Supports Chinese and English UI.
 - Supports small, medium, and large widget sizes.
-- Supports Free, Go, Plus, Pro, Business, and Enterprise plan labels.
 - Stays on the desktop like a calendar or weather widget.
-- The collapse button shrinks the widget into a visible desktop pill instead of hiding it.
+- Collapses into a visible desktop pill instead of disappearing.
+- Refreshes automatically every 60 seconds, with a manual refresh action.
 - Includes a macOS menu bar entry for restore, refresh, size, plan, and launch-at-login actions.
 
-## How It Works
+## Privacy
+
+Codex LED Widget reads quota information locally from your installed Codex app. It does not upload your OpenAI account data, does not display your token, and does not expose Codex credentials in the UI.
 
 The widget starts the local Codex `app-server` and calls:
 
@@ -29,13 +50,13 @@ The widget starts the local Codex `app-server` and calls:
 account/rateLimits/read
 ```
 
-It does not display your token, and it does not expose Codex credentials in the UI.
-
 ## Install
 
 ### Option 1: Download a release
 
-Download the latest `.dmg` from GitHub Releases, open it, and move the app to Applications.
+Download the latest `.dmg` from [GitHub Releases](https://github.com/halaoluan/codex-led-widget-mac/releases/latest), open it, and move the app to Applications.
+
+If macOS shows a first-run security prompt because the app is not signed yet, open **System Settings > Privacy & Security** and allow the app to run.
 
 ### Option 2: Run from source
 
@@ -68,11 +89,18 @@ This repository is also structured as a Codex plugin. The plugin manifest lives 
 
 The plugin presents the macOS desktop widget, installation instructions, and release artifacts as a Codex-discoverable package.
 
-## Notes
+## Current Limitations
 
 - Apple Silicon macOS builds are currently validated.
 - The app is not signed with an Apple Developer ID, so macOS may show a first-run security prompt.
 - The quota adapter depends on the local Codex app-server API. If Codex changes that API, the adapter may need an update.
+
+## Roadmap
+
+- Universal macOS build for both Apple Silicon and Intel Macs.
+- Apple Developer ID signing and notarization.
+- Homebrew Cask installation.
+- Automatic updates.
 
 ## License
 

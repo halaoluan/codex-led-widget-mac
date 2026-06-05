@@ -2,33 +2,60 @@
 
 ## English
 
-Patch release for the macOS desktop widget.
+Codex LED Widget is a liquid-glass macOS desktop widget for checking your local Codex quota without repeatedly opening the quota page.
 
-- Changes the minimize button into a visible collapse/expand action.
-- Keeps the widget on the desktop while collapsed.
-- Adds Chinese and English collapsed-state feedback.
-- Keeps all v0.1.6 features, including quota reading, desktop persistence, size modes, and plan labels.
+### Download
 
-Download the `.dmg`, open it, and move the app to Applications.
+Download the `.dmg`, open it, and move **Codex LED Widget** to Applications:
+
+https://github.com/halaoluan/codex-led-widget-mac/releases/latest
+
+### Highlights
+
+- Reads local Codex quota through the Codex app-server.
+- Shows 5-hour and 7-day quota windows with reset countdowns.
+- Uses green, yellow, and red status colors for available, low, and exhausted quota.
+- Supports Free, Go, Plus, Pro, Business, Team, and Enterprise plan labels.
+- Supports Chinese and English UI.
+- Supports small, medium, and large widget sizes.
+- Stays visible on the desktop like a calendar or weather widget.
+- Changes the minimize button into a visible collapse/expand action, so the widget does not disappear.
+
+### Privacy
+
+The app reads quota information locally from your installed Codex app. It does not upload OpenAI account data, display tokens, or expose Codex credentials in the UI.
+
+### Notes
+
+- Apple Silicon macOS builds are currently validated.
+- The app is not signed with an Apple Developer ID yet. If macOS shows a first-run security prompt, open **System Settings > Privacy & Security** and allow the app to run.
 
 ## 中文
 
-macOS 桌面小组件修复版本。
+Codex LED Widget 是一个液态玻璃风格的 macOS 桌面小组件，用来查看本机 Codex 剩余额度，不用反复打开额度页面。
 
-- 将最小化按钮改为可见的折叠 / 展开动作。
-- 折叠后小组件仍然保留在桌面，不会隐藏。
-- 新增中英文折叠状态反馈。
-- 保留 v0.1.6 的所有能力，包括额度读取、桌面常驻、尺寸切换和套餐显示。
+### 下载
 
-下载 `.dmg` 后打开，并拖入 Applications 即可使用。
+下载 `.dmg`，打开后把 **Codex LED Widget** 拖入 Applications：
 
-## v0.1.6 highlights
+https://github.com/halaoluan/codex-led-widget-mac/releases/latest
 
-- Adds a liquid-glass desktop widget for local Codex quota.
-- Reads quota through the local Codex app-server.
-- Shows 5-hour and 7-day quota windows with reset countdowns.
-- Adds green/yellow/red quota status.
-- Adds desktop-persistent widget behavior for macOS.
-- Adds small, medium, and large size modes.
-- Adds Free, Go, Plus, Pro, Business, and Enterprise plan labels.
-- Adds bilingual Chinese and English UI labels.
+### 亮点
+
+- 通过本机 Codex app-server 读取剩余额度。
+- 显示 5 小时窗口和 7 天窗口的额度比例与恢复倒计时。
+- 使用绿色、黄色、红色展示可用、偏低、已用尽三种状态。
+- 套餐显示支持 Free、Go、Plus、Pro、Business、Team、Enterprise。
+- 支持中文和英文界面。
+- 支持小 / 中 / 大三档尺寸。
+- 像日历、天气模块一样常驻桌面。
+- 将最小化按钮改为可见的折叠 / 展开动作，避免小组件消失。
+
+### 隐私说明
+
+应用只从你本机已经安装并登录的 Codex 读取额度信息。它不会上传 OpenAI 账号数据，不会展示 token，也不会把 Codex 登录凭据暴露在界面里。
+
+### 注意
+
+- 当前只验证了 Apple Silicon macOS 构建。
+- 尚未进行 Apple Developer ID 签名。如果 macOS 首次打开时提示安全确认，可以到 **系统设置 > 隐私与安全性** 里允许打开。
