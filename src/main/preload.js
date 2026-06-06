@@ -42,5 +42,9 @@ contextBridge.exposeInMainWorld("codexQuota", {
   },
   onPlanDisplayChanged: (callback) => {
     ipcRenderer.on("plan:displayChanged", (_event, value) => callback(value));
+  },
+  checkForUpdates: () => ipcRenderer.invoke("app:update:check"),
+  onUpdateStatus: (callback) => {
+    ipcRenderer.on("app:updateStatus", (_event, value) => callback(value));
   }
 });

@@ -8,8 +8,12 @@
   "scripts": {
     "dev": "electron .",
     "start": "electron .",
-    "build": "CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac dmg zip",
+    "build": "electron-builder --mac dmg zip --universal",
+    "build:unsigned": "CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac dmg zip --universal",
+    "build:arm64": "electron-builder --mac dmg zip --arm64",
+    "build:x64": "electron-builder --mac dmg zip --x64",
     "build:dir": "CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --dir",
+    "notarize": "node build/notarize.js",
     "check:quota": "node scripts/check-quota.js"
   },
   "build": {
@@ -19,6 +23,14 @@
       "output": "dist"
     },
     "artifactName": "Codex-LED-Widget-${version}-mac-${arch}.${ext}",
+    "afterSign": "build/notarize.js",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "halaoluan",
+        "repo": "codex-led-widget-mac"
+      }
+    ],
     "files": [
       "src/**/*",
       "scripts/**/*",
@@ -27,10 +39,15 @@
     ],
     "mac": {
       "category": "public.app-category.productivity",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
       "target": [
         {
           "target": "dmg",
           "arch": [
+            "universal",
             "arm64",
             "x64"
           ]
@@ -38,6 +55,7 @@
         {
           "target": "zip",
           "arch": [
+            "universal",
             "arm64",
             "x64"
           ]
@@ -49,7 +67,11 @@
     }
   },
   "devDependencies": {
+    "@electron/notarize": "^3.1.1",
     "electron": "^31.7.7",
     "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.9"
   }
 }

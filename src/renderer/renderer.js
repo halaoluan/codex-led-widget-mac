@@ -47,6 +47,11 @@ const copy = {
     pinned: "已固定到桌面",
     collapsed: "已折叠",
     expanded: "已展开",
+    updateAvailable: "发现新版本，正在后台下载",
+    updateCurrent: "当前已是最新版",
+    updateDownloaded: "新版本已下载，退出后自动安装",
+    updateDev: "开发模式不检查更新",
+    updateError: "检查更新失败",
     collapse: "折叠",
     expand: "展开",
     after: "后",
@@ -71,6 +76,11 @@ const copy = {
     pinned: "Pinned to desktop",
     collapsed: "Collapsed",
     expanded: "Expanded",
+    updateAvailable: "Update found. Downloading in background",
+    updateCurrent: "You are on the latest version",
+    updateDownloaded: "Update downloaded. It will install after quit",
+    updateDev: "Update checks are disabled in dev mode",
+    updateError: "Update check failed",
     collapse: "Collapse",
     expand: "Expand",
     after: "left",
@@ -266,6 +276,14 @@ window.codexQuota.onAlwaysOnTopChanged(syncAlwaysOnTop);
 window.codexQuota.onWidgetSizeChanged(renderWidgetSize);
 window.codexQuota.onCollapsedChanged(renderCollapsed);
 window.codexQuota.onPlanDisplayChanged(renderPlanDisplay);
+window.codexQuota.onUpdateStatus((update) => {
+  if (!update) return;
+  if (update.status === "available") els.statusText.textContent = t("updateAvailable");
+  if (update.status === "current") els.statusText.textContent = t("updateCurrent");
+  if (update.status === "downloaded") els.statusText.textContent = t("updateDownloaded");
+  if (update.status === "dev") els.statusText.textContent = t("updateDev");
+  if (update.status === "error") els.statusText.textContent = `${t("updateError")}: ${update.message || ""}`;
+});
 
 setLanguage(locale);
 syncAlwaysOnTop();

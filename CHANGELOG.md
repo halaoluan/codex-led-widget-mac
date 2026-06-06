@@ -2,10 +2,12 @@
 
 ## Unreleased
 
-- Polished the GitHub landing experience with download-focused English and Chinese README files.
-- Added privacy, installation, roadmap, and release notes copy for public users.
-- Added a social preview image asset.
-- Added issue templates, contribution notes, and a security policy.
+- Added Universal, Apple Silicon, and Intel Mac build scripts.
+- Added Apple Developer ID signing and notarization configuration with safe local-build fallback.
+- Added GitHub Release based automatic update checks for packaged builds.
+- Added a Homebrew Cask template for future tap publication.
+- Expanded English and Chinese README installation, privacy, signing, notarization, Homebrew, and build instructions.
+- Clarified privacy claims: the app does not collect, upload, or save OpenAI account information.
 
 ## 0.1.8
 

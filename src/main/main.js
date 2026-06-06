@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, shell, Tray, Menu, nativeImage, screen } = require("electron");
 const path = require("node:path");
 const fs = require("node:fs");
+const { autoUpdater } = require("electron-updater");
 const { getQuota } = require("./quota-service");
 
 const gotSingleInstanceLock = app.requestSingleInstanceLock();
@@ -41,11 +42,14 @@ const PLAN_DISPLAY_OPTIONS = [
 ];
 const QUOTA_CACHE_TTL_MS = 60_000;
 const QUOTA_BACKOFF_STEPS_MS = [30_000, 60_000, 120_000, 300_000];
+const UPDATE_CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000;
 
 let quotaCache = null;
 let quotaInFlight = null;
 let quotaFailureCount = 0;
 let quotaNextAutoRetryAt = 0;
+let updateCheckTimer = null;
+let updateDownloaded = false;
 
 function widgetBoundsFor(sizeName = currentWidgetSize) {
   const size = WIDGET_SIZES[sizeName] || WIDGET_SIZES.small;
@@ -152,6 +156,8 @@ function rebuildTrayMenu() {
       { label: isCollapsed ? "展开组件" : "折叠组件", click: toggleWidgetCollapse },
       { label: "放到右上角", click: placeWindowTopRight },
       { label: "刷新额度", click: () => mainWindow?.webContents.send("quota:refresh", { force: true }) },
+      { label: "检查更新", click: () => checkForUpdates(true) },
+      ...(updateDownloaded ? [{ label: "重启安装更新", click: installDownloadedUpdate }] : []),
       {
         label: "组件大小",
         submenu: Object.entries(WIDGET_SIZES).map(([value, size]) => ({
@@ -277,6 +283,7 @@ app.whenReady().then(() => {
   planDisplayOverride = settings.planDisplayOverride || "AUTO";
   createWindow();
   createTray();
+  setupAutoUpdater();
 
   ipcMain.handle("quota:get", async (_event, options = {}) => readQuota(options));
   ipcMain.handle("window:minimize", () => minimizeWindow());
@@ -294,6 +301,7 @@ app.whenReady().then(() => {
   ipcMain.handle("plan:display:set", (_event, value) => setPlanDisplayOverride(value));
   ipcMain.handle("app:launchAtLogin:get", () => launchAtLogin);
   ipcMain.handle("app:launchAtLogin:set", (_event, value) => setLaunchAtLogin(value));
+  ipcMain.handle("app:update:check", () => checkForUpdates(true));
   ipcMain.handle("external:openCodex", () => {
     const candidates = [
       "/Applications/Codex.app",
@@ -311,6 +319,67 @@ app.whenReady().then(() => {
 app.on("window-all-closed", (event) => {
   event.preventDefault();
 });
+
+app.on("before-quit", () => {
+  if (updateDownloaded) {
+    autoUpdater.autoInstallOnAppQuit = true;
+  }
+});
+
+function installDownloadedUpdate() {
+  if (!updateDownloaded) return;
+  autoUpdater.quitAndInstall(false, true);
+}
+
+function setupAutoUpdater() {
+  autoUpdater.autoDownload = true;
+  autoUpdater.autoInstallOnAppQuit = true;
+
+  autoUpdater.on("update-available", () => {
+    mainWindow?.webContents.send("app:updateStatus", { status: "available" });
+  });
+
+  autoUpdater.on("update-not-available", () => {
+    mainWindow?.webContents.send("app:updateStatus", { status: "current" });
+  });
+
+  autoUpdater.on("update-downloaded", () => {
+    updateDownloaded = true;
+    rebuildTrayMenu();
+    mainWindow?.webContents.send("app:updateStatus", { status: "downloaded" });
+  });
+
+  autoUpdater.on("error", (error) => {
+    mainWindow?.webContents.send("app:updateStatus", {
+      status: "error",
+      message: error?.message || "Update check failed"
+    });
+  });
+
+  checkForUpdates(false);
+  updateCheckTimer = setInterval(() => checkForUpdates(false), UPDATE_CHECK_INTERVAL_MS);
+}
+
+async function checkForUpdates(manual = false) {
+  if (!app.isPackaged) {
+    if (manual) {
+      mainWindow?.webContents.send("app:updateStatus", { status: "dev" });
+    }
+    return { skipped: true, reason: "dev" };
+  }
+
+  try {
+    return await autoUpdater.checkForUpdatesAndNotify();
+  } catch (error) {
+    if (manual) {
+      mainWindow?.webContents.send("app:updateStatus", {
+        status: "error",
+        message: error?.message || "Update check failed"
+      });
+    }
+    return { error: error?.message || "Update check failed" };
+  }
+}
 
 function setLaunchAtLogin(value) {
   launchAtLogin = Boolean(value);

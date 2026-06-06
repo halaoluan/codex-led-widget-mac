@@ -1,6 +1,8 @@
 # Security Policy
 
-Codex LED Widget reads quota information locally from the installed Codex app. It should not upload OpenAI account data or expose Codex credentials in the UI.
+Codex LED Widget reads quota information locally from the installed Codex app.
+
+It should not collect, upload, save, or display OpenAI account information, tokens, or Codex credentials.
 
 ## Reporting a Vulnerability
 
