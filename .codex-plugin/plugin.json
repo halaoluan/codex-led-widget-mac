@@ -1,6 +1,6 @@
 {
   "name": "codex-led-widget-mac",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "macOS desktop widget for displaying local Codex usage quota.",
   "author": {
     "name": "Codex LED Widget macOS Contributors",

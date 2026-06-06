@@ -7,6 +7,13 @@
 - Added a social preview image asset.
 - Added issue templates, contribution notes, and a security policy.
 
+## 0.1.8
+
+- Added automatic plan detection instead of defaulting the display to Plus.
+- Added quota caching and automatic retry backoff to reduce repeated Codex app-server launches.
+- Added clearer quota read error categories for missing Codex, timeouts, sign-in issues, server exits, and changed responses.
+- Added remaining quota percentage to collapsed mode.
+
 ## 0.1.7
 
 - Changed the minimize control into a visible collapse/expand action.

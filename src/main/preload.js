@@ -1,7 +1,17 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("codexQuota", {
-  getQuota: () => ipcRenderer.invoke("quota:get"),
+  getQuota: async (options) => {
+    const result = await ipcRenderer.invoke("quota:get", options);
+    if (result?.ok) return result.quota;
+
+    const error = new Error(result?.error?.message || "Cannot read Codex quota.");
+    error.code = result?.error?.code || "UNKNOWN";
+    error.userMessage = result?.error?.userMessage || null;
+    error.canOpenCodex = Boolean(result?.error?.canOpenCodex);
+    error.retryAt = result?.error?.retryAt || null;
+    throw error;
+  },
   minimize: () => ipcRenderer.invoke("window:minimize"),
   close: () => ipcRenderer.invoke("window:close"),
   getAlwaysOnTop: () => ipcRenderer.invoke("window:alwaysOnTop:get"),
@@ -19,7 +29,7 @@ contextBridge.exposeInMainWorld("codexQuota", {
   setLaunchAtLogin: (value) => ipcRenderer.invoke("app:launchAtLogin:set", value),
   openCodex: () => ipcRenderer.invoke("external:openCodex"),
   onRefresh: (callback) => {
-    ipcRenderer.on("quota:refresh", callback);
+    ipcRenderer.on("quota:refresh", (_event, options) => callback(options));
   },
   onAlwaysOnTopChanged: (callback) => {
     ipcRenderer.on("window:alwaysOnTopChanged", (_event, value) => callback(value));

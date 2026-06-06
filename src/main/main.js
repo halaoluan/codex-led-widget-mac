@@ -16,7 +16,7 @@ let trayMenu;
 const isAlwaysOnTop = true;
 let launchAtLogin = false;
 let currentWidgetSize = "small";
-let planDisplayOverride = "PLUS";
+let planDisplayOverride = "AUTO";
 let lastTrayRestoreAt = 0;
 let isCollapsed = false;
 
@@ -30,6 +30,7 @@ const WIDGET_SIZES = {
   large: { label: "大", scale: 1.18 }
 };
 const PLAN_DISPLAY_OPTIONS = [
+  { label: "自动识别", value: "AUTO" },
   { label: "Free", value: "FREE" },
   { label: "Go", value: "GO" },
   { label: "Plus", value: "PLUS" },
@@ -38,6 +39,13 @@ const PLAN_DISPLAY_OPTIONS = [
   { label: "Team", value: "TEAM" },
   { label: "Enterprise", value: "ENTERPRISE" }
 ];
+const QUOTA_CACHE_TTL_MS = 60_000;
+const QUOTA_BACKOFF_STEPS_MS = [30_000, 60_000, 120_000, 300_000];
+
+let quotaCache = null;
+let quotaInFlight = null;
+let quotaFailureCount = 0;
+let quotaNextAutoRetryAt = 0;
 
 function widgetBoundsFor(sizeName = currentWidgetSize) {
   const size = WIDGET_SIZES[sizeName] || WIDGET_SIZES.small;
@@ -143,7 +151,7 @@ function rebuildTrayMenu() {
       { label: "显示窗口", click: restoreWindowFromTray },
       { label: isCollapsed ? "展开组件" : "折叠组件", click: toggleWidgetCollapse },
       { label: "放到右上角", click: placeWindowTopRight },
-      { label: "刷新额度", click: () => mainWindow?.webContents.send("quota:refresh") },
+      { label: "刷新额度", click: () => mainWindow?.webContents.send("quota:refresh", { force: true }) },
       {
         label: "组件大小",
         submenu: Object.entries(WIDGET_SIZES).map(([value, size]) => ({
@@ -266,11 +274,11 @@ app.whenReady().then(() => {
   launchAtLogin = app.getLoginItemSettings().openAtLogin;
   const settings = readSettings();
   currentWidgetSize = settings.widgetSize || "small";
-  planDisplayOverride = settings.planDisplayOverride || "PLUS";
+  planDisplayOverride = settings.planDisplayOverride || "AUTO";
   createWindow();
   createTray();
 
-  ipcMain.handle("quota:get", async () => getQuota());
+  ipcMain.handle("quota:get", async (_event, options = {}) => readQuota(options));
   ipcMain.handle("window:minimize", () => minimizeWindow());
   ipcMain.handle("window:close", () => app.quit());
   ipcMain.handle("window:alwaysOnTop:get", () => isAlwaysOnTop);
@@ -311,6 +319,87 @@ function setLaunchAtLogin(value) {
   return launchAtLogin;
 }
 
+async function readQuota(options = {}) {
+  const force = Boolean(options.force);
+  const now = Date.now();
+
+  if (!force && quotaCache && now - quotaCache.cachedAt < QUOTA_CACHE_TTL_MS) {
+    return { ok: true, quota: { ...quotaCache.quota, fromCache: true } };
+  }
+
+  if (!force && quotaCache && now < quotaNextAutoRetryAt) {
+    return { ok: true, quota: { ...quotaCache.quota, fromCache: true, retryAt: new Date(quotaNextAutoRetryAt).toISOString() } };
+  }
+
+  if (quotaInFlight) {
+    return quotaInFlight;
+  }
+
+  quotaInFlight = getQuota()
+    .then((quota) => {
+      quotaFailureCount = 0;
+      quotaNextAutoRetryAt = 0;
+      quotaCache = { quota, cachedAt: Date.now() };
+      return { ok: true, quota };
+    })
+    .catch((error) => {
+      quotaFailureCount += 1;
+      quotaNextAutoRetryAt = Date.now() + backoffDelayFor(quotaFailureCount);
+      return { ok: false, error: describeQuotaError(error) };
+    })
+    .finally(() => {
+      quotaInFlight = null;
+    });
+
+  return quotaInFlight;
+}
+
+function backoffDelayFor(failureCount) {
+  return QUOTA_BACKOFF_STEPS_MS[Math.min(failureCount - 1, QUOTA_BACKOFF_STEPS_MS.length - 1)];
+}
+
+function describeQuotaError(error) {
+  const message = error?.message || "Unknown Codex quota error.";
+  const lowerMessage = message.toLowerCase();
+  let code = "UNKNOWN";
+  let zh = "无法读取额度，点此打开 Codex";
+  let en = "Cannot read quota. Click to open Codex";
+  let canOpenCodex = true;
+
+  if (error?.code === "ENOENT" || lowerMessage.includes("enoent") || lowerMessage.includes("not found")) {
+    code = "CODEX_NOT_FOUND";
+    zh = "未找到 Codex 应用，请先安装或设置路径";
+    en = "Codex was not found. Install it or set the path";
+  } else if (lowerMessage.includes("timed out") || lowerMessage.includes("timeout")) {
+    code = "TIMEOUT";
+    zh = "Codex 响应超时，稍后会自动重试";
+    en = "Codex timed out. It will retry automatically";
+    canOpenCodex = false;
+  } else if (lowerMessage.includes("login") || lowerMessage.includes("auth") || lowerMessage.includes("unauthorized")) {
+    code = "NOT_SIGNED_IN";
+    zh = "Codex 可能未登录，点此打开 Codex";
+    en = "Codex may not be signed in. Click to open Codex";
+  } else if (lowerMessage.includes("rate-limit snapshot") || lowerMessage.includes("ratelimits")) {
+    code = "UNEXPECTED_RESPONSE";
+    zh = "额度接口返回异常，可能需要更新适配";
+    en = "Quota response changed. The adapter may need an update";
+    canOpenCodex = false;
+  } else if (lowerMessage.includes("exited")) {
+    code = "SERVER_EXITED";
+    zh = "Codex 本地服务退出，稍后会自动重试";
+    en = "Codex local service exited. It will retry automatically";
+    canOpenCodex = false;
+  }
+
+  return {
+    code,
+    message,
+    userMessage: { zh, en },
+    canOpenCodex,
+    retryAt: quotaNextAutoRetryAt ? new Date(quotaNextAutoRetryAt).toISOString() : null
+  };
+}
+
 function setWidgetSize(value) {
   if (!Object.prototype.hasOwnProperty.call(WIDGET_SIZES, value)) return currentWidgetSize;
   currentWidgetSize = value;
@@ -329,7 +418,7 @@ function setWidgetSize(value) {
 
 function setPlanDisplayOverride(value) {
   const allowed = new Set(PLAN_DISPLAY_OPTIONS.map((plan) => plan.value));
-  planDisplayOverride = allowed.has(value) ? value : "PLUS";
+  planDisplayOverride = allowed.has(value) ? value : "AUTO";
   writeSettings({ planDisplayOverride });
   mainWindow?.webContents.send("plan:displayChanged", planDisplayOverride);
   rebuildTrayMenu();

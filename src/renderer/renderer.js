@@ -7,6 +7,7 @@ const els = {
   stateText: document.getElementById("stateText"),
   statusDot: document.getElementById("statusDot"),
   statusText: document.getElementById("statusText"),
+  collapsedRemaining: document.getElementById("collapsedRemaining"),
   remaining: document.getElementById("remaining"),
   liquidFill: document.getElementById("liquidFill"),
   primaryText: document.getElementById("primaryText"),
@@ -24,7 +25,8 @@ let lastQuota = null;
 let refreshTimer = null;
 let countdownTimer = null;
 let locale = localStorage.getItem("locale") || "zh";
-let planDisplayOverride = "PLUS";
+let planDisplayOverride = "AUTO";
+let lastError = null;
 
 const copy = {
   zh: {
@@ -39,6 +41,7 @@ const copy = {
     secondary: "7天窗口",
     plan: "计划",
     refreshed: "已刷新",
+    cached: "缓存",
     refreshing: "正在读取 Codex 额度...",
     failed: "无法读取额度，点此打开 Codex",
     pinned: "已固定到桌面",
@@ -62,6 +65,7 @@ const copy = {
     secondary: "7d window",
     plan: "Plan",
     refreshed: "Updated",
+    cached: "cache",
     refreshing: "Reading Codex quota...",
     failed: "Cannot read quota. Click to open Codex",
     pinned: "Pinned to desktop",
@@ -95,7 +99,7 @@ function renderWidgetSize(size) {
 }
 
 function renderPlanDisplay(value) {
-  planDisplayOverride = value || "PLUS";
+  planDisplayOverride = value || "AUTO";
   render(lastQuota);
 }
 
@@ -116,6 +120,7 @@ function quotaState(percent) {
 function render(quota) {
   if (!quota) return;
   lastQuota = quota;
+  lastError = null;
 
   const percent = Number(quota.remainingPercent);
   const state = quotaState(percent);
@@ -126,6 +131,7 @@ function render(quota) {
   els.statusDot.className = `status-dot ${state}`;
   els.stateText.textContent = state === "available" ? t("available") : state === "low" ? t("low") : state === "empty" ? t("empty") : t("loading");
   els.remaining.textContent = `${safePercent}%`;
+  els.collapsedRemaining.textContent = `${safePercent}%`;
   document.getElementById("remainingLabel").textContent = t("left");
   document.getElementById("primaryLabel").textContent = t("primary");
   document.getElementById("secondaryLabel").textContent = t("secondary");
@@ -135,25 +141,41 @@ function render(quota) {
   els.primaryText.textContent = formatWindow(quota.primary);
   els.secondaryText.textContent = formatWindow(quota.secondary);
   els.planText.textContent = formatPlan(quota.planType);
-  els.statusText.textContent = `${t("refreshed")} ${formatClock(new Date(quota.fetchedAt || Date.now()))}`;
+  const cacheLabel = quota.fromCache ? ` · ${t("cached")}` : "";
+  els.statusText.textContent = `${t("refreshed")} ${formatClock(new Date(quota.fetchedAt || Date.now()))}${cacheLabel}`;
 }
 
 function renderError(error) {
+  lastError = error;
   els.body.dataset.state = "error";
   els.trafficLight.className = "traffic-light error";
   els.statusDot.className = "status-dot error";
   els.stateText.textContent = t("error");
-  els.statusText.textContent = t("failed");
+  els.statusText.textContent = localizedErrorMessage(error);
   els.statusText.title = error?.message || "";
   els.remaining.textContent = "--%";
+  els.collapsedRemaining.textContent = "--%";
   els.primaryText.textContent = "--";
   els.secondaryText.textContent = "--";
   els.planText.textContent = "--";
 }
 
 function formatPlan(planType) {
-  if (planDisplayOverride) return planDisplayOverride;
-  return "PLUS";
+  if (planDisplayOverride && planDisplayOverride !== "AUTO") return planDisplayOverride;
+
+  const normalized = String(planType || "").trim();
+  if (!normalized || normalized.toLowerCase() === "unknown") return "--";
+
+  const label = normalized
+    .replace(/^chatgpt[_-]?/i, "")
+    .replace(/[_-]+/g, " ")
+    .trim();
+  return label ? label.toUpperCase() : "--";
+}
+
+function localizedErrorMessage(error) {
+  const message = error?.userMessage?.[locale] || error?.userMessage?.zh;
+  return message || t("failed");
 }
 
 function formatWindow(window) {
@@ -191,11 +213,11 @@ function formatClock(date) {
   });
 }
 
-async function refreshQuota() {
+async function refreshQuota(options = {}) {
   els.refreshBtn.classList.add("spinning");
   els.statusText.textContent = t("refreshing");
   try {
-    const quota = await window.codexQuota.getQuota();
+    const quota = await window.codexQuota.getQuota(options);
     render(quota);
   } catch (error) {
     renderError(error);
@@ -210,7 +232,7 @@ async function syncAlwaysOnTop() {
   els.pinBtn.title = "桌面常驻";
 }
 
-els.refreshBtn.addEventListener("click", refreshQuota);
+els.refreshBtn.addEventListener("click", () => refreshQuota({ force: true }));
 els.minimizeBtn.addEventListener("click", async () => {
   const collapsed = await window.codexQuota.toggleCollapsed();
   renderCollapsed(collapsed);
@@ -236,10 +258,10 @@ els.sizeBtn.addEventListener("click", async () => {
   renderWidgetSize(await window.codexQuota.cycleWidgetSize());
 });
 els.statusText.addEventListener("click", () => {
-  if (els.body.dataset.state === "error") window.codexQuota.openCodex();
+  if (els.body.dataset.state === "error" && lastError?.canOpenCodex) window.codexQuota.openCodex();
 });
 
-window.codexQuota.onRefresh(refreshQuota);
+window.codexQuota.onRefresh((_options) => refreshQuota(_options || { force: true }));
 window.codexQuota.onAlwaysOnTopChanged(syncAlwaysOnTop);
 window.codexQuota.onWidgetSizeChanged(renderWidgetSize);
 window.codexQuota.onCollapsedChanged(renderCollapsed);
@@ -250,8 +272,8 @@ syncAlwaysOnTop();
 window.codexQuota.getWidgetSize().then(renderWidgetSize);
 window.codexQuota.getCollapsed().then(renderCollapsed);
 window.codexQuota.getPlanDisplay().then(renderPlanDisplay);
-refreshQuota();
-refreshTimer = setInterval(refreshQuota, REFRESH_INTERVAL_MS);
+refreshQuota({ force: true });
+refreshTimer = setInterval(() => refreshQuota({ force: false }), REFRESH_INTERVAL_MS);
 countdownTimer = setInterval(() => render(lastQuota), 30_000);
 
 window.addEventListener("beforeunload", () => {

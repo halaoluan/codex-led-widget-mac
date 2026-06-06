@@ -1,4 +1,4 @@
-# Codex LED Widget for macOS 0.1.7
+# Codex LED Widget for macOS 0.1.8
 
 ## English
 
@@ -20,6 +20,10 @@ https://github.com/halaoluan/codex-led-widget-mac/releases/latest
 - Supports small, medium, and large widget sizes.
 - Stays visible on the desktop like a calendar or weather widget.
 - Changes the minimize button into a visible collapse/expand action, so the widget does not disappear.
+- Detects the real Codex plan automatically instead of defaulting to Plus.
+- Uses quota caching and retry backoff to make automatic refresh lighter and more stable.
+- Shows clearer local error messages when Codex is missing, signed out, slow to respond, or returns an unexpected quota response.
+- Shows the remaining quota percentage even in collapsed mode.
 
 ### Privacy
 
@@ -50,6 +54,10 @@ https://github.com/halaoluan/codex-led-widget-mac/releases/latest
 - 支持小 / 中 / 大三档尺寸。
 - 像日历、天气模块一样常驻桌面。
 - 将最小化按钮改为可见的折叠 / 展开动作，避免小组件消失。
+- 自动识别真实 Codex 套餐，不再默认显示 Plus。
+- 增加额度缓存和自动重试退避，让自动刷新更轻、更稳定。
+- Codex 未安装、未登录、响应超时或额度接口异常时，会显示更清楚的本地错误提示。
+- 折叠模式也会显示剩余额度百分比。
 
 ### 隐私说明
 

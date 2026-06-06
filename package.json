@@ -1,6 +1,6 @@
 {
   "name": "codex-led-widget-mac",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "macOS liquid-glass desktop widget for showing local Codex usage quota.",
   "main": "src/main/main.js",
   "author": "Codex LED Widget macOS Contributors",

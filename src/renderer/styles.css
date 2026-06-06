@@ -49,8 +49,8 @@ body[data-collapsed="true"] .traffic-light {
 }
 
 body[data-collapsed="true"] .brand-name {
-  font-size: 15px;
-  max-width: 132px;
+  font-size: 13px;
+  max-width: 128px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -58,6 +58,10 @@ body[data-collapsed="true"] .brand-name {
 
 body[data-collapsed="true"] .brand-state {
   display: none;
+}
+
+body[data-collapsed="true"] .collapsed-remaining {
+  display: block;
 }
 
 body[data-collapsed="true"] .icon-button,
@@ -196,6 +200,15 @@ body[data-state="error"] {
   font-size: 13px;
   font-weight: 700;
   color: rgba(240, 247, 255, 0.68);
+}
+
+.collapsed-remaining {
+  display: none;
+  margin-top: 3px;
+  color: var(--accent);
+  font-size: 17px;
+  font-weight: 900;
+  line-height: 1;
 }
 
 .window-actions {
